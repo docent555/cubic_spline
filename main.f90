@@ -132,32 +132,32 @@ double precision function seval(n, u, x, y, b, c, d)
    integer n
    double precision u, x(n), y(n), b(n), c(n), d(n)
 !
-!THIS SUBROUTINE CALCULATES THE VALUE OF THE CUBIC
-!SPLINE
+!THIS SUBROUTINE EVALUATES THE CUBIC SPLINE FUNCTION
 !
 !SEVAL = Y(I)+B(I)*(U-X(I)) + C(I)*(U-X(I)))**2 + D(I)*(U-X(I))**3
 !
-!WHERE X(I) .LT. U .LT. X(I + 1). GORNER SCHEME IS USED
+!WHERE X(I) .LT. U .LT. X(I + 1). USING HORNER'S RULE
 !
 !IF U .LT. X(1), THEN THE VALUE 1 = 1 IS TAKEN.
 !IF U .GE. X(N), THEN THE VALUE I = N IS TAKEN.
 !
-!INPUT INFORMATION..
+!INPUT..
 !
-!N = NUMBER OF SET POINTS
-!U = ABSCISSUS FOR WHICH THE VALUE OF SPLINE IS CALCULATED
-!X, Y = ARRAYS OF SPECIFIED ABSCISS AND ORDINATES
-!B, C, D = ARRAYS OF SPLINE COEFFICIENTS, COMPUTED BY THE SPLINE SUBROUTINE
+!N = THE NUMBER OF DATA POINTS
+!U = THE ABSCISSA AT WHICH THE SPLINE IS TO BE EVALUATED
+!X, Y = THE ARRAYS OF DATA ABSCISSAS AND ORD1NATES
+!B, C, D = ARRAYS OF SPLINE COEFFICIENTS, COMPUTED BY SPLINE SUBROUTINE
 !
-!IF U IS NOT IN THE SAME INTERVAL COMPARED TO THE PREVIOUS CALL,
-!THEN A BINARY SEARCH IS USED TO FIND THE RIGHT INTERVAL.
+!IF U IS NOT IN THE SAME INTERVAL AS THE PREVIOUS CALL, THEN A
+!BINARY SEARCH IS PERFORMED TO DETERMINE THE PROPER INTERVAL.
 !
    integer i, j, k
-   double precision dx
+   real dx
    data i/1/
    if (i .ge. n) i = 1
    if (u .lt. x(i)) go to 10
-   if (u .lt. x(i + 1)) go to 30
+   if (u .le. x(i + 1)) go to 30
+
 !
 ! BINARY SEARCH
 !
@@ -168,7 +168,7 @@ double precision function seval(n, u, x, y, b, c, d)
    if (u .ge. x(k)) i = k
    if (j .gt. i + 1) go to 20
 !
-! CALCULATE SPLINE
+! EVALUATE SPLINE
 !
 30 dx = u - x(i)
    seval = y(i) + dx*(b(i) + dx*(c(i) + dx*d(i)))
